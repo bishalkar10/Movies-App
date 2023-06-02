@@ -17,14 +17,14 @@ export default function App() {
         <Route path="/" element={<Homepage />} />
         <Route path="/trending_gallery" element={<TrendingGallery />} />
         <Route path="/discover_gallery" element={<DiscoverGallery />} />
-        <Route path="/details/:id" element={<MovieDetails />} />
+        <Route path="/details/:type/:id" element={<MovieDetails />} />
       </Routes>
     </Router>
   );
 }
 
 function MovieDetails() {
-  const { id } = useParams();
+  const { id, type } = useParams();
 
-  return <Details id={id} />;
+  return <Details id={id} type={type} />;
 }

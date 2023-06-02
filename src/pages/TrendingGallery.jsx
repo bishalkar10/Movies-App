@@ -20,7 +20,7 @@ export default function Gallery() {
     }, // convert integer to string
     headers: {
       accept: "application/json",
-      Authorization: `Bearer ${bearerToken}`,
+      Authorization: `Bearer ${bearerToken} `,
     },
   };
 
@@ -48,10 +48,12 @@ export default function Gallery() {
   const listOfMovies = uniqueMovies.map((movie) => {
     return (
       <FlexMoviesCard
+        type={movie.media_type}
         id={movie.id}
         key={movie.id}
         url={fixedPath + movie.poster_path} // * const fixedPath + the url for the poster
         name={movie.title || movie.originial_title || movie.original_name} // * sometimes the title is not available ans sometimes it's original_title or original_name
+        releaseDate={formatDate(movie.release_date || movie.first_air_date)}
       />
     );
   });
@@ -103,8 +105,8 @@ export default function Gallery() {
   }
   return (
     <>
-      <div className="flex items-center gap-10 p-5 mt-5 bg-red-50 ">
-        <h2 className="sm:text-3xl ">Trending</h2>
+      <div className="flex items-center gap-5 p-5 mt-5 bg-red-50 ">
+        <h2 className="sm:text-3xl text-xl mr-auto">Trending</h2>
         <Selector
           name="timeFrame"
           id="timeFrame_trendingGallery"
@@ -128,10 +130,23 @@ export default function Gallery() {
       <ShowGridCards listOfMovies={listOfMovies} />
       <div
         onClick={scrollToTop}
-        className="fixed grid w-8 h-8 bg-white rounded-full bottom-5 right-5 place-content-center animate-bounce"
+        className="fixed grid w-8 h-8 bg-white rounded-full shadow-md cursor-pointer bottom-5 right-5 place-content-center animate-bounce"
       >
         <i className="fa fa-arrow-up"></i>
       </div>
     </>
   );
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+
+  // Format the date string
+  const formattedDate = date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  return formattedDate; // Output: Mar 22, 2023
 }

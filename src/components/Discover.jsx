@@ -19,7 +19,7 @@ export default function Discover() {
     },
     headers: {
       accept: "application/json",
-      Authorization: `Bearer ${bearerToken}`,
+      Authorization: `Bearer ${bearerToken} `,
     },
   };
 
@@ -38,18 +38,20 @@ export default function Discover() {
   const listOfMovies = moviesArray.map((movie) => {
     return (
       <MoviesCard
+        type={movie.media_type}
         id={movie.id}
         key={movie.id}
         url={fixedPath + movie.poster_path} // const fixedPath + the url for the poster
         name={movie.title || movie.originial_title || movie.original_name} // sometimes the title is not available ans sometimes it's original_title or original_name
+        releaseDate={formatDate(movie.release_date || movie.first_air_date)}
       />
     );
   });
 
   return (
     <>
-      <div className="flex items-center gap-10 p-5 mt-5 bg-red-50 ">
-        <h2 className="text-3xl ">Discover</h2>
+      <div className="flex items-center gap-5 p-5 mt-5 bg-red-50 ">
+        <h2 className="text-xl sm:text-3xl mr-auto">Discover</h2>
 
         <Selector
           name="contentType"
@@ -64,4 +66,16 @@ export default function Discover() {
       <ShowCards listOfMovies={listOfMovies} route="/discover_gallery" />
     </>
   );
+}
+function formatDate(dateString) {
+  const date = new Date(dateString);
+
+  // Format the date string
+  const formattedDate = date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  return formattedDate; // Output: Mar 22, 2023
 }

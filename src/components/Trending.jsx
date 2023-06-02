@@ -18,7 +18,7 @@ export default function Trending() {
 
     headers: {
       accept: "application/json",
-      Authorization: `Bearer ${bearerToken}`,
+      Authorization: `Bearer ${bearerToken} `,
     },
   };
 
@@ -27,6 +27,7 @@ export default function Trending() {
     async function fetchData() {
       const response = await axios.request(options);
       setMoviesArray(response.data.results);
+      console.log(response.data.results);
     }
     fetchData();
   }, [timeFrame, contentType]);
@@ -35,18 +36,20 @@ export default function Trending() {
   const listOfMovies = moviesArray.map((movie) => {
     return (
       <MoviesCard
+        type={movie.media_type}
         id={movie.id}
         key={movie.id}
         url={fixedPath + movie.poster_path} // const fixedPath + the url for the poster
-        name={movie.title || movie.originial_title || movie.original_name} // sometimes the title is not available ans sometimes it's original_title or original_name
+        name={movie.title || movie.originial_title || movie.original_name} // sometimes the title is not available and sometimes it's original_title or original_name
+        releaseDate={formatDate(movie.release_date || movie.first_air_date)} // sometimes the release_date is not available and sometimes it's first_air_date
       />
     );
   });
 
   return (
     <>
-      <div className="flex items-center gap-10 p-5 mt-5 bg-red-50 ">
-        <h2 className="text-3xl ">Trending</h2>
+      <div className="flex items-center gap-5 p-5 mt-5 bg-red-50 ">
+        <h2 className="text-xl sm:text-3xl mr-auto ">Trending</h2>
         <Selector
           setMoviesArray={setMoviesArray}
           state={timeFrame}

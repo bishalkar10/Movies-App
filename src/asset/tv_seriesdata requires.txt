@@ -1,0 +1,26 @@
+title: data.name || data.original_name,
+overview: data.overview,
+poster_path: data.poster_path,
+backdrop_path: data.backdrop_path,
+genres: data.genres,
+tagline: data.tagline ? data.tagline : "",
+first_air_date: data.first_air_date,
+last_air_date: data.last_air_date,
+number_of_episodes: data.number_of_episodes,
+number_of_seasons: data.number_of_seasons,
+original_name: data.original_name, 
+
+
+
+Movie 
+.........................
+title: data.title || data.original_data || data.oririginal_name,
+overview: data.overview,
+poster_path: data.poster_path,
+backdrop_path: data.backdrop_path,
+status: data.status,
+release_date: data.release_date,
+genres: data.genres,
+release_year: getReleaseYear(data.release_date),
+tagline: data.tagline ? data.tagline : "",
+runtime: getRuntime(data.runtime),
