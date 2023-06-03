@@ -1,11 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SearchResultsCard from "./SearchResultsCard";
-
-export default function SearchResults({ searchValue, filter }) {
+import { useParams } from "react-router-dom";
+export default function SearchResults() {
+  const { searchValue, filter } = useParams();
   const bearerToken = import.meta.env.VITE_BEARER_TOKEN;
   const [results, setResults] = useState([]);
-  const fixedPath = "https://image.tmdb.org/t/p/w500";
+  const fixedPath = "https://image.tmdb.org/t/p/w500"; // url prefix for images
+
+  // api call inside useEffect hook
   useEffect(() => {
     async function fetchData() {
       const options = {
@@ -29,10 +32,13 @@ export default function SearchResults({ searchValue, filter }) {
 
     fetchData();
   }, [searchValue, filter]);
+
+  // Array of SearchResultsCard component
   const CardArray = results.map((result) => {
     return (
       <SearchResultsCard
         key={result.id}
+        id={result.id}
         title={result.title || result.original_title || result.name}
         backdrop_path={
           result.backdrop_path &&
@@ -46,6 +52,6 @@ export default function SearchResults({ searchValue, filter }) {
       />
     );
   });
-
+  // Jsx --- rendering the CardArray
   return <div>{CardArray}</div>;
 }

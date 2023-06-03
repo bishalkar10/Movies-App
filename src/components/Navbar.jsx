@@ -1,39 +1,45 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
-import SearchResults from "./SearchResults";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import SearchFilter from "./SearchFilter";
 
 export default function Navbar() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchValue, setSearchValue] = useState("");
-  const [filter, setFilter] = useState("multi");
+  const [searchTerm, setSearchTerm] = useState(""); // * if we use searchTerm in the useEffect dependency array , with each change it will make an API call
+  const [searchValue, setSearchValue] = useState(""); // * it is in the dependency array of the useEfffecy hook inside the SearchResults component
+  const [filter, setFilter] = useState("multi"); // filter for search
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  function handleChange(e) {
     setSearchTerm(e.target.value);
-  };
+  }
 
-  const handleClick = (e) => {
+  function handleClick(e) {
     e.preventDefault();
     setSearchValue(searchTerm);
-  };
-
+  }
+  // navigation depends on seachValue so its added as a dependency
+  useEffect(() => {
+    if (searchValue) {
+      navigate(`/search/${filter}/${searchValue}`);
+    }
+  }, [navigate, searchValue, filter]);
   return (
     <>
       <header>
-        <nav className="flex gap-5 w-full px-5 py-3 text-white bg-blue-800">
+        <nav className="flex w-full gap-5 px-5 py-3 text-white bg-blue-800">
           <h1 className="mr-auto sm:text-3xl">
             <Link to="/">MoviesDB</Link>
           </h1>
+          {/*  form element */}
           <form className="relative">
             <input
-              className="h-10 w-40 sm:w-60  indent-3 text-black rounded"
+              className="w-40 h-10 text-black rounded sm:w-60 indent-3"
               type="text"
               placeholder="Iron Man"
               value={searchTerm}
               onChange={handleChange}
             />
             <button onClick={handleClick} className="absolute right-3 top-2">
-              <i className="fa fa-search text-black"></i>
+              <i className="text-black fa fa-search"></i>
             </button>
           </form>
           <SearchFilter
@@ -45,9 +51,6 @@ export default function Navbar() {
           />
         </nav>
       </header>
-      {searchValue.trim() !== "" && (
-        <SearchResults searchValue={searchValue} filter={filter} />
-      )}
     </>
   );
 }

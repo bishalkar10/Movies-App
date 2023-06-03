@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { MoviesCard } from "./MoviesCard";
 import { ShowCards } from "./ShowCards";
 import Selector from "./Selector";
-
+import { formatDate } from "./helperfunction";
 export default function Trending() {
   const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
   const [timeFrame, setTimeFrame] = useState("day");
@@ -36,7 +36,7 @@ export default function Trending() {
   const listOfMovies = moviesArray.map((movie) => {
     return (
       <MoviesCard
-        type={movie.media_type}
+        type={contentType}
         id={movie.id}
         key={movie.id}
         url={fixedPath + movie.poster_path} // const fixedPath + the url for the poster
@@ -48,7 +48,7 @@ export default function Trending() {
 
   return (
     <>
-      <div className="flex items-center gap-5 p-5 mt-5 bg-red-50 ">
+      <div className="flex items-center gap-5 p-5  bg-red-50 ">
         <h2 className="text-xl sm:text-3xl mr-auto ">Trending</h2>
         <Selector
           setMoviesArray={setMoviesArray}
@@ -70,17 +70,4 @@ export default function Trending() {
       <ShowCards listOfMovies={listOfMovies} route="/trending_gallery" />
     </>
   );
-}
-
-function formatDate(dateString) {
-  const date = new Date(dateString);
-
-  // Format the date string
-  const formattedDate = date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-
-  return formattedDate; // Output: Mar 22, 2023
 }

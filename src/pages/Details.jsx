@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
-export default function Details({ id, type }) {
+import { useParams } from "react-router-dom";
+import { getReleaseYear, getRuntime } from "../components/helperfunction";
+export default function Details() {
+  const { id, type } = useParams();
   const [movieData, setMovieData] = useState({});
   const fixedPath = "https://image.tmdb.org/t/p/w500";
   const bearerToken = import.meta.env.VITE_BEARER_TOKEN;
@@ -14,17 +16,6 @@ export default function Details({ id, type }) {
       Authorization: `Bearer ${bearerToken} `,
     },
   };
-
-  function getReleaseYear(release_date) {
-    const date = new Date(release_date);
-    return date.getFullYear();
-  }
-  function getRuntime(runtime) {
-    runtime = parseInt(runtime);
-    const hour = Math.floor(runtime / 60); // if runtime is 176m  then hour is 176/ 60 = 2
-    const minute = runtime - hour * 60; // minute = 176  - (60 * 2) = 176 - 120 = 56
-    return hour > 0 ? `${hour}H ${minute}minutes` : `${minute}minutes`;
-  }
 
   useEffect(() => {
     async function fetchData() {
@@ -49,7 +40,6 @@ export default function Details({ id, type }) {
       </div>
     );
   }
-
   return (
     <>
       <div
@@ -63,7 +53,7 @@ export default function Details({ id, type }) {
         <div className="bg-[rgba(0_0_0/0.5)] flex flex-col justify-center items-center md:grid md:grid-cols-[auto_1fr]">
           <div className="md:h-screen">
             <img
-              className="h-full p-10 rounded-[100px] "
+              className="h-full p-10 rounded-[70px] "
               src={fixedPath + movieData.poster_path}
               alt=""
             />
@@ -73,7 +63,7 @@ export default function Details({ id, type }) {
             <div className="p-10 pt-0 text-white md:pt-10">
               <h1 className="mb-1 text-4xl">
                 {movieData.title}
-                {`(${movieData.release_year})`}
+                {` (${getReleaseYear(movieData.release_date)})`}
               </h1>
               <p>{`${movieData.status} • ${movieData.release_date} • ${
                 movieData.genres && movieData.genres.map((genre) => genre.name)
@@ -94,10 +84,10 @@ export default function Details({ id, type }) {
                 )} - ${getReleaseYear(movieData.last_air_date)})`}
               </h1>
               <p>{`${
-                movieData.genres && movieData.genres.map((genre) => genre.name)
+                movieData.genres &&
+                movieData.genres.map((genre) => genre.name).join(", ")
               } 
              • ${getRuntime(movieData.last_episode_to_air.runtime)}`}</p>
-
               <i className="inline-block py-3">{movieData.tagline}</i>
               <p className="my-2 text-2xl">Overview</p>
               <p>{movieData.overview}</p>

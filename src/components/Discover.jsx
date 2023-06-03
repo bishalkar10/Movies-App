@@ -4,13 +4,14 @@ import { MoviesCard } from "./MoviesCard";
 import Genre from "./Genre";
 import { ShowCards } from "./ShowCards";
 import Selector from "./Selector";
+import { formatDate } from "./helperfunction";
 
 export default function Discover() {
   const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
   const [contentType, setContentType] = useState("movie");
   const [genre, setGenre] = useState("");
-  const fixedPath = "https://image.tmdb.org/t/p/w500";
-  const bearerToken = import.meta.env.VITE_BEARER_TOKEN;
+  const fixedPath = "https://image.tmdb.org/t/p/w500"; // url prefix for images link
+  const bearerToken = import.meta.env.VITE_BEARER_TOKEN; // extracting the bearer token from .env file
   const options = {
     method: "GET",
     url: `https://api.themoviedb.org/3/discover/${contentType}`,
@@ -38,11 +39,11 @@ export default function Discover() {
   const listOfMovies = moviesArray.map((movie) => {
     return (
       <MoviesCard
-        type={movie.media_type}
+        type={contentType}
         id={movie.id}
         key={movie.id}
         url={fixedPath + movie.poster_path} // const fixedPath + the url for the poster
-        name={movie.title || movie.originial_title || movie.original_name} // sometimes the title is not available ans sometimes it's original_title or original_name
+        name={movie.title || movie.original_title || movie.original_name} // sometimes the title is not available ans sometimes it's original_title or original_name
         releaseDate={formatDate(movie.release_date || movie.first_air_date)}
       />
     );
@@ -50,8 +51,8 @@ export default function Discover() {
 
   return (
     <>
-      <div className="flex items-center gap-5 p-5 mt-5 bg-red-50 ">
-        <h2 className="text-xl sm:text-3xl mr-auto">Discover</h2>
+      <div className="flex items-center gap-5 p-5 bg-red-50 ">
+        <h2 className="mr-auto text-xl sm:text-3xl">Discover</h2>
 
         <Selector
           name="contentType"
@@ -66,16 +67,4 @@ export default function Discover() {
       <ShowCards listOfMovies={listOfMovies} route="/discover_gallery" />
     </>
   );
-}
-function formatDate(dateString) {
-  const date = new Date(dateString);
-
-  // Format the date string
-  const formattedDate = date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-
-  return formattedDate; // Output: Mar 22, 2023
 }

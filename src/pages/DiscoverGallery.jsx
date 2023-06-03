@@ -4,7 +4,7 @@ import { FlexMoviesCard } from "../components/MoviesCard";
 import Genre from "../components/Genre";
 import Selector from "../components/Selector";
 import { ShowGridCards } from "../components/ShowCards";
-
+import { scrollToTop, formatDate } from "../components/helperfunction";
 export default function DiscoverGallery() {
   const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
   const [page, setPage] = useState(1); // page number
@@ -49,7 +49,7 @@ export default function DiscoverGallery() {
   const listOfMovies = uniqueMovies.map((movie) => {
     return (
       <FlexMoviesCard
-        type={movie.media_type}
+        type={contentType}
         id={movie.id}
         key={movie.id}
         url={fixedPath + movie.poster_path} // * const fixedPath + the url for the poster
@@ -98,15 +98,10 @@ export default function DiscoverGallery() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-  function scrollToTop() {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }
+
   return (
     <div>
-      <div className="flex items-center gap-5 p-5 mt-5 bg-red-50 ">
+      <div className="flex items-center gap-5 p-5  bg-red-50 ">
         <h2 className="sm:text-3xl text-xl mr-auto ">Discover</h2>
 
         <Selector
@@ -136,16 +131,4 @@ export default function DiscoverGallery() {
       </div>
     </div>
   );
-}
-function formatDate(dateString) {
-  const date = new Date(dateString);
-
-  // Format the date string
-  const formattedDate = date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-
-  return formattedDate; // Output: Mar 22, 2023
 }
