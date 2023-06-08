@@ -1,9 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import SearchFilter from "./SearchFilter";
-import SearchContext from "./SearchContext";
-import SearchResults from "./SearchResults";
-
 export default function Navbar() {
   const [searchTerm, setSearchTerm] = useState(""); // * if we use searchTerm in the useEffect dependency array , with each change it will make an API call
   const [filter, setFilter] = useState("multi"); // filter for search
