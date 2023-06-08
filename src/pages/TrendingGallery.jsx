@@ -32,8 +32,6 @@ export default function Gallery() {
         ...prevMoviesArray,
         ...response.data.results,
       ]);
-
-      console.log(response.data);
     }
 
     fetchData();
@@ -100,8 +98,8 @@ export default function Gallery() {
 
   return (
     <>
-      <div className="flex items-center gap-5 p-5  bg-red-50 ">
-        <h2 className="sm:text-3xl text-xl mr-auto">Trending</h2>
+      <div className="flex items-center gap-5 p-5  bg-[#e9edc9] ">
+        <h2 className="mr-auto text-xl sm:text-3xl">Trending Gallery</h2>
         <Selector
           name="timeFrame"
           id="timeFrame_trendingGallery"

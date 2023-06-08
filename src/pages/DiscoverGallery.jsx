@@ -34,7 +34,6 @@ export default function DiscoverGallery() {
         ...prevMoviesArray,
         ...response.data.results,
       ]);
-      console.log(response.data);
     }
 
     fetchData();
@@ -101,8 +100,8 @@ export default function DiscoverGallery() {
 
   return (
     <div>
-      <div className="flex items-center gap-5 p-5  bg-red-50 ">
-        <h2 className="sm:text-3xl text-xl mr-auto ">Discover</h2>
+      <div className="flex items-center gap-5 p-5  bg-[#e9edc9] ">
+        <h2 className="mr-auto text-xl sm:text-3xl ">Discover Gallery</h2>
 
         <Selector
           name="contentType"
