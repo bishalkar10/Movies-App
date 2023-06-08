@@ -2,8 +2,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import SearchResultsCard from "./SearchResultsCard";
 import { useParams } from "react-router-dom";
+
 export default function SearchResults() {
-  const { searchValue, filter } = useParams();
+  const { filter, searchTerm } = useParams();
   const bearerToken = import.meta.env.VITE_BEARER_TOKEN;
   const [results, setResults] = useState([]);
   const fixedPath = "https://image.tmdb.org/t/p/w500"; // url prefix for images
@@ -15,7 +16,7 @@ export default function SearchResults() {
         method: "GET",
         url: `https://api.themoviedb.org/3/search/${filter}`,
         params: {
-          query: searchValue,
+          query: searchTerm,
           include_adult: "false",
           language: "en-US",
           page: "1",
@@ -26,12 +27,11 @@ export default function SearchResults() {
         },
       };
       const response = await axios.request(options);
-      console.log(response.data);
       setResults(response.data.results);
     }
 
     fetchData();
-  }, [searchValue, filter]);
+  }, [searchTerm, filter]);
 
   // Array of SearchResultsCard component
   const CardArray = results.map((result) => {
