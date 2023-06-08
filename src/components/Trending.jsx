@@ -1,33 +1,39 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { MoviesCard } from "./MoviesCard";
-import { ShowCards } from "./ShowCards";
+import { ShowCards, ShowLoadingCards } from "./ShowCards";
 import Selector from "./Selector";
 import { formatDate } from "./helperfunction";
+
 export default function Trending() {
   const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
   const [timeFrame, setTimeFrame] = useState("day");
   const bearerToken = import.meta.env.VITE_BEARER_TOKEN;
   const [contentType, setContentType] = useState("movie");
   const fixedPath = "https://image.tmdb.org/t/p/w500";
+  const [loading, setLoading] = useState(true);
 
   // axios options
   const options = {
     method: "GET",
     url: `https://api.themoviedb.org/3/trending/${contentType}/${timeFrame}`,
-
     headers: {
       accept: "application/json",
       Authorization: `Bearer ${bearerToken} `,
     },
   };
 
-  // call api then set moviesArray to response.data.results  -> it's an array
+  // call api then set moviesArray to response.data.results -> it's an array
   useEffect(() => {
     async function fetchData() {
-      const response = await axios.request(options);
-      setMoviesArray(response.data.results);
-      console.log(response.data.results);
+      try {
+        const response = await axios.request(options);
+        setMoviesArray(response.data.results);
+        setLoading(false);
+        response.data.results;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     }
     fetchData();
   }, [timeFrame, contentType]);
@@ -39,17 +45,17 @@ export default function Trending() {
         type={contentType}
         id={movie.id}
         key={movie.id}
-        url={fixedPath + movie.poster_path} // const fixedPath + the url for the poster
-        name={movie.title || movie.originial_title || movie.original_name} // sometimes the title is not available and sometimes it's original_title or original_name
-        releaseDate={formatDate(movie.release_date || movie.first_air_date)} // sometimes the release_date is not available and sometimes it's first_air_date
+        url={fixedPath + movie.poster_path}
+        name={movie.title || movie.originial_title || movie.original_name}
+        releaseDate={formatDate(movie.release_date || movie.first_air_date)}
       />
     );
   });
 
   return (
     <>
-      <div className="flex items-center gap-5 p-5  bg-red-50 ">
-        <h2 className="text-xl sm:text-3xl mr-auto ">Trending</h2>
+      <div className="flex items-center gap-5 p-5 bg-[#e9edc9] ">
+        <h2 className="mr-auto text-xl sm:text-3xl ">Trending</h2>
         <Selector
           setMoviesArray={setMoviesArray}
           state={timeFrame}
@@ -67,7 +73,11 @@ export default function Trending() {
         />
       </div>
 
-      <ShowCards listOfMovies={listOfMovies} route="/trending_gallery" />
+      {loading ? (
+        <ShowLoadingCards /> // Display loading cards while data is loading
+      ) : (
+        <ShowCards listOfMovies={listOfMovies} route="/trending_gallery" />
+      )}
     </>
   );
 }
