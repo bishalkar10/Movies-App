@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { MoviesCard } from "./MoviesCard";
 import Genre from "./Genre";
-import { ShowCards } from "./ShowCards";
+import { ShowCards, ShowLoadingCards } from "./ShowCards";
 import Selector from "./Selector";
 import { formatDate } from "./helperfunction";
 
@@ -10,6 +10,8 @@ export default function Discover() {
   const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
   const [contentType, setContentType] = useState("movie");
   const [genre, setGenre] = useState("");
+  const [loading, setLoading] = useState(true);
+
   const fixedPath = "https://image.tmdb.org/t/p/w500"; // url prefix for images link
   const bearerToken = import.meta.env.VITE_BEARER_TOKEN; // extracting the bearer token from .env file
   const options = {
@@ -26,14 +28,18 @@ export default function Discover() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await axios.request(options);
-      setMoviesArray(response.data.results);
-
-      //   console.log(response.data);
+      try {
+        const response = await axios.request(options);
+        setMoviesArray(response.data.results);
+        setLoading(false);
+        response.data.results;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     }
     fetchData();
 
-    // console.log(moviesArray);
+    // (moviesArray);
   }, [contentType, genre]);
 
   const listOfMovies = moviesArray.map((movie) => {
@@ -51,7 +57,7 @@ export default function Discover() {
 
   return (
     <>
-      <div className="flex items-center gap-5 p-5 bg-red-50 ">
+      <div className="flex items-center gap-5 p-5 bg-[#e9edc9] ">
         <h2 className="mr-auto text-xl sm:text-3xl">Discover</h2>
 
         <Selector
@@ -64,7 +70,11 @@ export default function Discover() {
         />
         <Genre type={contentType} genre={genre} setGenre={setGenre} />
       </div>
-      <ShowCards listOfMovies={listOfMovies} route="/discover_gallery" />
+      {loading ? (
+        <ShowLoadingCards /> // Display loading cards while data is loading
+      ) : (
+        <ShowCards listOfMovies={listOfMovies} route="/discover_gallery" />
+      )}
     </>
   );
 }
