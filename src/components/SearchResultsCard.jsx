@@ -1,4 +1,4 @@
-import { TvGenre, MoviesGenre } from "../asset/GenreData";
+import { Genres } from "../asset/GenreData";
 import { Link } from "react-router-dom";
 import { getReleaseYear } from "./helperfunction";
 export default function SearchResultsCard({
@@ -15,12 +15,12 @@ export default function SearchResultsCard({
   // * find the genre id inside the GenreData component and return the name of the genre
   if (type === "tv" && genres) {
     genreList = genres.map((genreId) => {
-      const genre = TvGenre.tvGenres.find((item) => item.id === genreId);
+      const genre = Genres.tvGenres.find((item) => item.id === genreId);
       return genre ? genre.name : null;
     });
   } else if (type === "movie" && genres) {
     genreList = genres.map((genreId) => {
-      const genre = MoviesGenre.movieGenres.find((item) => item.id === genreId);
+      const genre = Genres.movieGenres.find((item) => item.id === genreId);
       return genre ? genre.name : null;
     });
   }
