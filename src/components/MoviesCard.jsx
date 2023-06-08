@@ -24,7 +24,7 @@ export function FlexMoviesCard({ type, id, url, name, releaseDate }) {
     </Link>
   );
 }
-// TODO - Loadind Cards components while our cards are still loading
+// TODO - Loadind Cards components while our cards are still loading from the API
 export function LoadingCards() {
   return (
     <div className="flex flex-col items-center flex-shrink-0 w-40 h-auto gap-4 bg-slate-200 hover:scale-110 hover:duration-300">
