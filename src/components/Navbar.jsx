@@ -22,8 +22,8 @@ export default function Navbar() {
   return (
     <>
       <header className="sticky top-0 left-0">
-        <nav className="flex w-full gap-5 px-5 py-3 text-white bg-[#7c162e]">
-          <h1 className="mr-auto sm:text-3xl">
+        <nav className="flex items-center w-full gap-5 px-5 md:py-5 py-3 z-40 text-white bg-[#7c162e]">
+          <h1 className="mr-auto text-xl sm:text-3xl">
             <Link to="/">Movies Gallery</Link>
           </h1>
           {/*  form element */}
