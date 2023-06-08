@@ -1,4 +1,4 @@
-export const MoviesGenre = {
+export const Genres = {
   movieGenres: [
     {
       id: 28,
@@ -77,9 +77,7 @@ export const MoviesGenre = {
       name: "Western",
     },
   ],
-};
 
-export const TvGenre = {
   tvGenres: [
     {
       id: 10759,
