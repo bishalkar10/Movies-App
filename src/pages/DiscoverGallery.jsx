@@ -4,7 +4,12 @@ import { FlexMoviesCard } from "../components/MoviesCard";
 import Genre from "../components/Genre";
 import Selector from "../components/Selector";
 import { ShowGridCards } from "../components/ShowCards";
-import { scrollToTop, formatDate } from "../components/helperfunction";
+import {
+  ScrollToTopButton,
+  formatDate,
+  useScrollVisibility,
+} from "../components/helperfunction";
+
 export default function DiscoverGallery() {
   const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
   const [page, setPage] = useState(1); // page number
@@ -12,6 +17,8 @@ export default function DiscoverGallery() {
   const [contentType, setContentType] = useState("movie");
   const fixedPath = "https://image.tmdb.org/t/p/w500";
   const bearerToken = import.meta.env.VITE_BEARER_TOKEN;
+  const showArrowButton = useScrollVisibility();
+
   // axios options
   const options = {
     method: "GET",
@@ -127,12 +134,7 @@ export default function DiscoverGallery() {
       </div>
 
       <ShowGridCards listOfMovies={listOfMovies} />
-      <div
-        onClick={scrollToTop}
-        className="fixed grid w-8 h-8 bg-white rounded-full shadow-md cursor-pointer bottom-5 right-5 place-content-center animate-bounce"
-      >
-        <i className="fa fa-arrow-up"></i>
-      </div>
+      {showArrowButton && <ScrollToTopButton />}
     </div>
   );
 }

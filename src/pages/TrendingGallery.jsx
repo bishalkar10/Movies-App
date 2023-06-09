@@ -3,7 +3,12 @@ import { useState, useEffect } from "react";
 import { FlexMoviesCard } from "../components/MoviesCard";
 import Selector from "../components/Selector";
 import { ShowGridCards } from "../components/ShowCards";
-import { scrollToTop, formatDate } from "../components/helperfunction";
+import {
+  ScrollToTopButton,
+  formatDate,
+  useScrollVisibility,
+} from "../components/helperfunction";
+
 export default function Gallery() {
   const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
   const [timeFrame, setTimeFrame] = useState("day");
@@ -11,6 +16,8 @@ export default function Gallery() {
   const [contentType, setContentType] = useState("movie");
   const fixedPath = "https://image.tmdb.org/t/p/w500";
   const bearerToken = import.meta.env.VITE_BEARER_TOKEN;
+  const showArrowButton = useScrollVisibility();
+
   // axios options
   const options = {
     method: "GET",
@@ -42,6 +49,7 @@ export default function Gallery() {
     const firstIndex = self.findIndex((item) => item.id === movie.id);
     return firstIndex === index;
   });
+
   // * map MoviesCard component for each movie in uniqueMovies
   const listOfMovies = uniqueMovies.map((movie) => {
     return (
@@ -49,13 +57,13 @@ export default function Gallery() {
         type={contentType}
         id={movie.id}
         key={movie.id}
-        url={fixedPath + movie.poster_path} // * const fixedPath + the url for the poster
+        url={fixedPath + movie.poster_path}
         name={
           movie.title ||
           movie.name ||
           movie.originial_title ||
           movie.original_name
-        } // * sometimes the title is not available ans sometimes it's original_title or original_name
+        }
         releaseDate={formatDate(movie.release_date || movie.first_air_date)}
       />
     );
@@ -66,10 +74,8 @@ export default function Gallery() {
   }
 
   useEffect(() => {
-    // when our user reaches the page bottom them immedietly call the handlePageEnd funtion
-    // then set the isScrolling variable to true
-    // don't make the change the isScroll varible to false for the next 500ms to prevent excessive API calls
     let isScrolling = false;
+
     function handleScroll() {
       if (isScrolling) {
         return;
@@ -126,12 +132,7 @@ export default function Gallery() {
         />
       </div>
       <ShowGridCards listOfMovies={listOfMovies} />
-      <div
-        onClick={scrollToTop}
-        className="fixed grid w-8 h-8 bg-white rounded-full shadow-md cursor-pointer bottom-5 right-5 place-content-center animate-bounce"
-      >
-        <i className="fa fa-arrow-up"></i>
-      </div>
+      {showArrowButton && <ScrollToTopButton />}
     </>
   );
 }
