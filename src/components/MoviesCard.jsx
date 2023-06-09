@@ -4,7 +4,13 @@ export function MoviesCard({ type, id, url, name, releaseDate }) {
   return (
     <Link to={`/details/${type}/${id}`}>
       <div className="flex flex-col flex-shrink-0 w-40 h-auto gap-2 hover:scale-110 hover:duration-300">
-        <img className="w-full h-auto rounded-lg" src={url} alt="" />
+        <img
+          className="w-full h-auto rounded-lg"
+          src={url}
+          alt=""
+          width={160}
+          height={240}
+        />
         <p className="font-semibold text-center">{name} </p>
         <p className="text-center">{releaseDate} </p>
       </div>
@@ -12,7 +18,7 @@ export function MoviesCard({ type, id, url, name, releaseDate }) {
   );
 }
 
-// * This is slightly different than Moviescards .. It is only used in TrendingGallery and DiscoverGallery
+// * This is slightly different than Moviescards. here width is not fixed it takes full width of the grid.. It is only used in TrendingGallery and DiscoverGallery
 export function FlexMoviesCard({ type, id, url, name, releaseDate }) {
   return (
     <Link to={`/details/${type}/${id}`}>
