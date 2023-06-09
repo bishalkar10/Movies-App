@@ -49,7 +49,12 @@ export default function Discover() {
         id={movie.id}
         key={movie.id}
         url={fixedPath + movie.poster_path} // const fixedPath + the url for the poster
-        name={movie.title || movie.original_title || movie.original_name} // sometimes the title is not available ans sometimes it's original_title or original_name
+        name={
+          movie.title ||
+          movie.name ||
+          movie.original_title ||
+          movie.original_name
+        } // sometimes the title is not available ans sometimes it's original_title or original_name
         releaseDate={formatDate(movie.release_date || movie.first_air_date)}
       />
     );

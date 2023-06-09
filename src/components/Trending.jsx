@@ -46,7 +46,12 @@ export default function Trending() {
         id={movie.id}
         key={movie.id}
         url={fixedPath + movie.poster_path}
-        name={movie.title || movie.originial_title || movie.original_name}
+        name={
+          movie.title ||
+          movie.name ||
+          movie.originial_title ||
+          movie.original_name
+        }
         releaseDate={formatDate(movie.release_date || movie.first_air_date)}
       />
     );
