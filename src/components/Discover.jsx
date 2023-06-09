@@ -29,10 +29,10 @@ export default function Discover() {
   useEffect(() => {
     async function fetchData() {
       try {
+        setLoading(true); // setLoading to true while data is loading
         const response = await axios.request(options);
         setMoviesArray(response.data.results);
-        setLoading(false);
-        response.data.results;
+        setLoading(false); // setLoading to false when data is loaded
       } catch (error) {
         console.error("Error fetching data:", error);
       }
