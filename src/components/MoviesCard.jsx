@@ -7,7 +7,7 @@ export function MoviesCard({ type, id, url, name, releaseDate }) {
         <img
           className="w-full h-auto rounded-lg"
           src={url}
-          alt=""
+          alt={name}
           width={160}
           height={240}
         />
@@ -23,7 +23,7 @@ export function FlexMoviesCard({ type, id, url, name, releaseDate }) {
   return (
     <Link to={`/details/${type}/${id}`}>
       <div className="flex flex-col flex-shrink-0 w-full h-auto gap-2 py-4 hover:scale-110 hover:duration-300">
-        <img className="w-full h-auto rounded-lg" src={url} alt="" />
+        <img className="w-full h-auto rounded-lg" src={url} alt={name} />
         <p className="font-semibold text-center">{name} </p>
         <p className="text-center">{releaseDate} </p>
       </div>
