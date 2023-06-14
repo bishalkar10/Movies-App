@@ -7,7 +7,7 @@ This is a React web application.
 - I have added a loading Screen in the **Details** page. So, while API call isn't finished a loading screen will be shown to the user.
 - Infinite scroll is implemented in two pages.   
 
-Bonus : Visit https://lively-flan-375b2d.netlify.app/trending_gallery or https://lively-flan-375b2d.netlify.app/discover_gallery and then resize the window. See the optimization.   
+Bonus : Visit Trending Gallery or Discover Gallery section of the app and then resize the window. See the optimization.   
 
 # Installation :
 Visit the repo and then :
