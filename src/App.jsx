@@ -2,7 +2,6 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useParams,
 } from "react-router-dom";
 import Homepage from "./pages/Homepage";
 import TrendingGallery from "./pages/TrendingGallery";
