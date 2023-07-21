@@ -4,7 +4,7 @@ import { MoviesCard } from "./MoviesCard";
 import Genre from "./Genre";
 import { ShowCards, ShowLoadingCards } from "./ShowCards";
 import Selector from "./Selector";
-import { formatDate } from "./helperfunction";
+import { formatDate } from "./utils";
 
 export default function Discover() {
   const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results

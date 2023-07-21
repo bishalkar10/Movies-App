@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { getReleaseYear, getRuntime } from "../components/helperfunction";
+import { getReleaseYear, getRuntime } from "../components/utils";
 export default function Details() {
   const { id, type } = useParams();
   const [movieData, setMovieData] = useState({});

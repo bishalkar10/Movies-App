@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { MoviesCard } from "./MoviesCard";
 import { ShowCards, ShowLoadingCards } from "./ShowCards";
 import Selector from "./Selector";
-import { formatDate } from "./helperfunction";
+import { formatDate } from "./utils";
 
 export default function Trending() {
   const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results

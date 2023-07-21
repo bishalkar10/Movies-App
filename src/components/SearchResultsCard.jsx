@@ -1,6 +1,6 @@
 import { Genres } from "../asset/GenreData";
 import { Link } from "react-router-dom";
-import { getReleaseYear } from "./helperfunction";
+import { getReleaseYear } from "./utils";
 export default function SearchResultsCard({
   id,
   title,
