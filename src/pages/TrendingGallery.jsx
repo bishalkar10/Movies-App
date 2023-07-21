@@ -3,11 +3,8 @@ import { useState, useEffect } from "react";
 import { FlexMoviesCard } from "../components/MoviesCard";
 import Selector from "../components/Selector";
 import { ShowGridCards } from "../components/ShowCards";
-import {
-  ScrollToTopButton,
-  formatDate,
-  useScrollVisibility,
-} from "../components/helperfunction";
+import ScrollToTopButton from "../components/ScrollToTopButton";
+import { formatDate, useScrollVisibility } from "../components/utils";
 
 export default function Gallery() {
   const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
@@ -16,7 +13,9 @@ export default function Gallery() {
   const [contentType, setContentType] = useState("movie");
   const fixedPath = "https://image.tmdb.org/t/p/w500";
   const bearerToken = import.meta.env.VITE_BEARER_TOKEN;
-  const showArrowButton = useScrollVisibility();
+  const showArrowButton = useScrollVisibility();     // custom hook - returns true if the user scrolled down 250px
+  const uniqueMoviesId = new Map()
+  const uniqueMovies = []
 
   // axios options
   const options = {
@@ -44,11 +43,13 @@ export default function Gallery() {
     fetchData();
   }, [timeFrame, contentType, page]);
 
-  // * filter moviesArray to get unique movies
-  const uniqueMovies = moviesArray.filter((movie, index, self) => {
-    const firstIndex = self.findIndex((item) => item.id === movie.id);
-    return firstIndex === index;
-  });
+  // * filter moviesArray to get unique movie
+  moviesArray.forEach(movie => {
+    if (!uniqueMoviesId.has(movie.id)) {
+      uniqueMoviesId.set(movie.id, true)
+      uniqueMovies.push(movie)
+    }
+  })
 
   // * map MoviesCard component for each movie in uniqueMovies
   const listOfMovies = uniqueMovies.map((movie) => {
