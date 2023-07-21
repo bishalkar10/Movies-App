@@ -3,9 +3,9 @@ import { Genres } from "../asset/GenreData";
 // we are recieving three props type , genre, setGenre
 export default function Genre(props) {
   // * props.genre is the value of the select element, and props.setGenre is the function that changes the value of the select element
-  const { genre, setGenre } = props;
+  const { genre, setGenre, type } = props;
   // * if props.type is movie then we use the movieGenres array, else we use the tvGenres array
-  const genres = props.type === "movie" ? Genres.movieGenres : Genres.tvGenres;
+  const genres = (type === "movie" ? Genres.movieGenres : Genres.tvGenres);
 
   const handleGenreChange = (event) => {
     const selectedValue = String(event.target.value); // * genre expects a string value so we will convert the integer to string
