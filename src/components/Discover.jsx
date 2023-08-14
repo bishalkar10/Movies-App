@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { MoviesCard } from "./MoviesCard";
 import Genre from "./Genre";
 import { ShowCards, ShowLoadingCards } from "./ShowCards";
@@ -14,7 +14,7 @@ export default function Discover() {
 
   const fixedPath = "https://image.tmdb.org/t/p/w500"; // url prefix for images link
   const bearerToken = import.meta.env.VITE_BEARER_TOKEN; // extracting the bearer token from .env file
-  const options = {
+  const options = useMemo(() => ({
     method: "GET",
     url: `https://api.themoviedb.org/3/discover/${contentType}`,
     params: {
@@ -24,7 +24,7 @@ export default function Discover() {
       accept: "application/json",
       Authorization: `Bearer ${bearerToken} `,
     },
-  };
+  }), [contentType, genre]); // * useMemo to avoid re-rendering when contentType or genre changes
 
   useEffect(() => {
     async function fetchData() {
@@ -40,7 +40,7 @@ export default function Discover() {
     fetchData();
 
     // (moviesArray);
-  }, [contentType, genre]);
+  }, [options]);
 
   const listOfMovies = moviesArray.map((movie) => {
     return (

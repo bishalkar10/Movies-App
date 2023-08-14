@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { FlexMoviesCard } from "../components/MoviesCard";
 import Genre from "../components/Genre";
 import Selector from "../components/Selector";
@@ -19,7 +19,7 @@ export default function DiscoverGallery() {
   const uniqueMovies = []
 
   // axios options
-  const options = {
+  const options = useMemo(() => ({
     method: "GET",
     url: `https://api.themoviedb.org/3/discover/${contentType}`,
     params: {
@@ -30,7 +30,7 @@ export default function DiscoverGallery() {
       accept: "application/json",
       Authorization: `Bearer ${bearerToken} `,
     },
-  };
+  }), [page, genre, contentType]) // * useMemo to prevent infinite loop
 
   // call api then set moviesArray to response.data.results  -> it's an array
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function DiscoverGallery() {
     }
 
     fetchData();
-  }, [genre, contentType, page]);
+  }, [options]);
 
   // * filter moviesArray to get unique movie
   moviesArray.forEach(movie => {

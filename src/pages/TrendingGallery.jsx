@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { FlexMoviesCard } from "../components/MoviesCard";
 import Selector from "../components/Selector";
 import { ShowGridCards } from "../components/ShowCards";
@@ -18,7 +18,7 @@ export default function Gallery() {
   const uniqueMovies = []
 
   // axios options
-  const options = {
+  const options = useMemo(() => ({
     method: "GET",
     url: `https://api.themoviedb.org/3/trending/${contentType}/${timeFrame}`,
     params: {
@@ -28,7 +28,7 @@ export default function Gallery() {
       accept: "application/json",
       Authorization: `Bearer ${bearerToken} `,
     },
-  };
+  }), [contentType, timeFrame, page]) // * useMemo to prevent infinite loop
 
   // call api then set moviesArray to response.data.results  -> it's an array
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function Gallery() {
     }
 
     fetchData();
-  }, [timeFrame, contentType, page]);
+  }, [options]);
 
   // * filter moviesArray to get unique movie
   moviesArray.forEach(movie => {

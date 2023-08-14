@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { MoviesCard } from "./MoviesCard";
 import { ShowCards, ShowLoadingCards } from "./ShowCards";
 import Selector from "./Selector";
@@ -14,14 +14,14 @@ export default function Trending() {
   const [loading, setLoading] = useState(true);
 
   // axios options
-  const options = {
+  const options = useMemo(() => ({
     method: "GET",
     url: `https://api.themoviedb.org/3/trending/${contentType}/${timeFrame}`,
     headers: {
       accept: "application/json",
       Authorization: `Bearer ${bearerToken} `,
     },
-  };
+  }), [contentType, timeFrame]); // * useMemo to prevent infinite loop
 
   // call api then set moviesArray to response.data.results -> it's an array
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function Trending() {
       }
     }
     fetchData();
-  }, [timeFrame, contentType]);
+  }, [options]);
 
   // map MoviesCard component for each movie in moviesArray
   const listOfMovies = moviesArray.map((movie) => {
