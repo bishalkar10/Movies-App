@@ -7,19 +7,17 @@ export default function Details() {
   const [movieData, setMovieData] = useState({});
   const fixedPath = "https://image.tmdb.org/t/p/w500";
   const bearerToken = import.meta.env.VITE_BEARER_TOKEN;
-  const options = {
-    method: "GET",
-    url: `https://api.themoviedb.org/3/${type}/${id}`,
-    params: { language: "en-US" },
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${bearerToken} `,
-    },
-  };
 
   useEffect(() => {
     async function fetchData() {
-      const response = await axios.request(options);
+      const url = `https://api.themoviedb.org/3/${type}/${id}`;
+      const options = {
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${bearerToken} `,
+        },
+      };
+      const response = await axios.get(url, options);
       const data = response.data; // data is an object
       setMovieData(data);
     }
@@ -45,9 +43,8 @@ export default function Details() {
       <div
         className="bg-fixed bg-center bg-no-repeat bg-cover"
         style={{
-          backgroundImage: `url(${
-            "https://image.tmdb.org/t/p/original" + movieData.backdrop_path
-          }) `,
+          backgroundImage: `url(${"https://image.tmdb.org/t/p/original" + movieData.backdrop_path
+            }) `,
         }}
       >
         <div className="bg-[rgba(0_0_0/0.5)] flex flex-col justify-center items-center md:grid md:grid-cols-[auto_1fr]">
@@ -65,9 +62,8 @@ export default function Details() {
                 {movieData.title}
                 {` (${getReleaseYear(movieData.release_date)})`}
               </h1>
-              <p>{`${movieData.status} • ${movieData.release_date} • ${
-                movieData.genres && movieData.genres.map((genre) => genre.name)
-              } 
+              <p>{`${movieData.status} • ${movieData.release_date} • ${movieData.genres && movieData.genres.map((genre) => genre.name)
+                } 
              • ${getRuntime(movieData.runtime)}`}</p>
 
               <i className="inline-block py-3">{movieData.tagline}</i>
@@ -83,10 +79,9 @@ export default function Details() {
                   movieData.first_air_date
                 )} - ${getReleaseYear(movieData.last_air_date)})`}
               </h1>
-              <p>{`${
-                movieData.genres &&
+              <p>{`${movieData.genres &&
                 movieData.genres.map((genre) => genre.name).join(", ")
-              } 
+                } 
              • ${getRuntime(movieData.last_episode_to_air.runtime)}`}</p>
               <i className="inline-block py-3">{movieData.tagline}</i>
               <p className="my-2 text-2xl">Overview</p>
