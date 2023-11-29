@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { MoviesCard } from "./MoviesCard";
 import Genre from "./Genre";
 import { ShowCards, ShowLoadingCards } from "./ShowCards";
@@ -14,23 +14,23 @@ export default function Discover() {
 
   const fixedPath = "https://image.tmdb.org/t/p/w500"; // url prefix for images link
   const bearerToken = import.meta.env.VITE_BEARER_TOKEN; // extracting the bearer token from .env file
-  const options = useMemo(() => ({
-    method: "GET",
-    url: `https://api.themoviedb.org/3/discover/${contentType}`,
-    params: {
-      with_genres: genre,
-    },
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${bearerToken} `,
-    },
-  }), [contentType, genre]); // * useMemo to avoid re-rendering when contentType or genre changes
 
   useEffect(() => {
     async function fetchData() {
+      const url = `https://api.themoviedb.org/3/discover/${contentType}`;
+      const options = {
+        params: {
+          with_genres: genre,
+        },
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${bearerToken} `,
+        },
+      };
+
       try {
         setLoading(true); // setLoading to true while data is loading
-        const response = await axios.request(options);
+        const response = await axios.get(url, options);
         setMoviesArray(response.data.results);
         setLoading(false); // setLoading to false when data is loaded
       } catch (error) {
@@ -38,9 +38,7 @@ export default function Discover() {
       }
     }
     fetchData();
-
-    // (moviesArray);
-  }, [options]);
+  }, [contentType, genre]);
 
   const listOfMovies = moviesArray.map((movie) => {
     return (
