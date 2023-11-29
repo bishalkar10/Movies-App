@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { MoviesCard } from "./MoviesCard";
 import { ShowCards, ShowLoadingCards } from "./ShowCards";
 import Selector from "./Selector";
@@ -13,22 +13,20 @@ export default function Trending() {
   const fixedPath = "https://image.tmdb.org/t/p/w500";
   const [loading, setLoading] = useState(true);
 
-  // axios options
-  const options = useMemo(() => ({
-    method: "GET",
-    url: `https://api.themoviedb.org/3/trending/${contentType}/${timeFrame}`,
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${bearerToken} `,
-    },
-  }), [contentType, timeFrame]); // * useMemo to prevent infinite loop
-
   // call api then set moviesArray to response.data.results -> it's an array
   useEffect(() => {
     async function fetchData() {
+      const url = `https://api.themoviedb.org/3/trending/${contentType}/${timeFrame}`;
+      const options = {
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${bearerToken} `,
+        },
+      };
       try {
         setLoading(true); // setLoading to true while data is loading
-        const response = await axios.request(options);
+        const response = await axios.get(url, options);
+        console.log(response.data.results)
         setMoviesArray(response.data.results);
         setLoading(false); // setLoading to false when data is loaded
       } catch (error) {
@@ -36,7 +34,7 @@ export default function Trending() {
       }
     }
     fetchData();
-  }, [options]);
+  }, [contentType, timeFrame]);
 
   // map MoviesCard component for each movie in moviesArray
   const listOfMovies = moviesArray.map((movie) => {
@@ -49,7 +47,7 @@ export default function Trending() {
         name={
           movie.title ||
           movie.name ||
-          movie.originial_title ||
+          movie.original_title ||
           movie.original_name
         }
         releaseDate={formatDate(movie.release_date || movie.first_air_date)}
