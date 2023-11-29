@@ -60,7 +60,7 @@ export default function DiscoverGallery() {
         name={
           movie.title ||
           movie.name ||
-          movie.originial_title ||
+          movie.original_title ||
           movie.original_name
         } // * sometimes the title is not available ans sometimes it's original_title or original_name
         releaseDate={formatDate(movie.release_date || movie.first_air_date)}
