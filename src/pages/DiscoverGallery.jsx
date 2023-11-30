@@ -68,30 +68,25 @@ export default function DiscoverGallery() {
     );
   });
 
-  function handlePageEnd() {
-    setPage((prevPage) => prevPage + 1);
-  }
-
+  // when our user reaches the page bottom them immedietly call the handlePageEnd funtion and set isScrolling to true.
+  // We set isScrolling to true so that the handlePageEnd function is not called multiple times.
+  // We set isScrolling to false after 500ms so that the handlePageEnd function can be called again.
+  // * this is to prevent the handlePageEnd function from being called multiple times when the user reaches the page bottom
   useEffect(() => {
-    // when our user reaches the page bottom them immedietly call the handlePageEnd funtion
-    // then set the isScrolling variable to true
-    // don't make the change the isScroll varible to false for the next 500ms to prevent excessive API calls
+    // when our user reaches the page bottom them immedietly call the handlePageEnd funtion 
+    // this function increments the page number by 1 which causes the useEffect to run again and make an api call with the new page number
+    const handlePageEnd = () => setPage((prevPage) => prevPage + 1);
     let isScrolling = false;
+
     function handleScroll() {
       if (isScrolling) {
         return;
       }
 
-      const scrollTop =
-        (document.documentElement && document.documentElement.scrollTop) ||
-        document.body.scrollTop;
-      const scrollHeight =
-        (document.documentElement && document.documentElement.scrollHeight) ||
-        document.body.scrollHeight;
-      const clientHeight =
-        document.documentElement.clientHeight || window.innerHeight;
-      const scrolledToBottom =
-        Math.ceil(scrollTop + clientHeight + 200) >= scrollHeight;
+      const scrollTop = document.documentElement?.scrollTop || document.body.scrollTop;
+      const scrollHeight = document.documentElement?.scrollHeight || document.body.scrollHeight;
+      const clientHeight = document.documentElement?.clientHeight || window.innerHeight;
+      const scrolledToBottom = Math.ceil(scrollTop + clientHeight + 200) >= scrollHeight;
 
       if (scrolledToBottom) {
         handlePageEnd();
