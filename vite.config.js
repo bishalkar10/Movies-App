@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import dotenv from "dotenv";
+import path from "path";
 
 export default defineConfig(({ mode }) => {
   // Load environment variables based on the current mode
@@ -14,6 +15,11 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     define: {
       "process.env": env,
+    },
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
     },
   };
 });

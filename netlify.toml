@@ -1,0 +1,20 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+# The Proxy Rule
+# Redirects all calls from /api/* to https://api.themoviedb.org/3/*
+# The :splat placeholder copies everything after /api/ to the new URL
+[[redirects]]
+  from = "/api/*"
+  to = "https://api.themoviedb.org/3/:splat"
+  status = 200
+  force = true
+
+# Allow localhost to use this proxy (CORS)
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "*"
+    Access-Control-Allow-Methods = "*"

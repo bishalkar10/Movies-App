@@ -1,10 +1,10 @@
-import axios from "axios";
+import { getTrending } from "@/api/tmdb";
 import { useState, useEffect } from "react";
-import { FlexMoviesCard } from "../components/MoviesCard";
-import Selector from "../components/Selector";
-import { ShowGridCards } from "../components/ShowCards";
-import ScrollToTopButton from "../components/ScrollToTopButton";
-import { formatDate, useScrollVisibility } from "../components/utils";
+import { FlexMoviesCard } from "@/components/MoviesCard";
+import Selector from "@/components/Selector";
+import { ShowGridCards } from "@/components/ShowCards";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
+import { formatDate, useScrollVisibility } from "@/components/utils";
 
 export default function Gallery() {
   const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
@@ -12,7 +12,6 @@ export default function Gallery() {
   const [page, setPage] = useState(1); // page number
   const [contentType, setContentType] = useState("movie");
   const fixedPath = "https://image.tmdb.org/t/p/w500";
-  const bearerToken = import.meta.env.VITE_BEARER_TOKEN;
   const showArrowButton = useScrollVisibility();     // custom hook - returns true if the user scrolled down 250px
   const uniqueMoviesId = new Map()
   const uniqueMovies = []
@@ -20,17 +19,7 @@ export default function Gallery() {
   // call api then set moviesArray to response.data.results  -> it's an array
   useEffect(() => {
     async function fetchData() {
-      const url = `https://api.themoviedb.org/3/trending/${contentType}/${timeFrame}`;
-      const options = {
-        params: {
-          page: page.toString(),
-        }, // convert integer to string
-        headers: {
-          accept: "application/json",
-          Authorization: `Bearer ${bearerToken} `,
-        },
-      };
-      const response = await axios.get(url, options);
+      const response = await getTrending(contentType, timeFrame, page);
       setMoviesArray((prevMoviesArray) => [
         ...prevMoviesArray,
         ...response.data.results,

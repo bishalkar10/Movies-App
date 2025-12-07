@@ -1,32 +1,17 @@
-import axios from "axios";
+import { getSearch } from "@/api/tmdb";
 import { useEffect, useState } from "react";
 import SearchResultsCard from "./SearchResultsCard";
 import { useParams } from "react-router-dom";
 
 export default function SearchResults() {
   const { filter, searchTerm } = useParams();
-  const bearerToken = import.meta.env.VITE_BEARER_TOKEN;
   const [results, setResults] = useState([]);
   const fixedPath = "https://image.tmdb.org/t/p/w500"; // url prefix for images
 
   // api call inside useEffect hook
   useEffect(() => {
     async function fetchData() {
-      const options = {
-        method: "GET",
-        url: `https://api.themoviedb.org/3/search/${filter}`,
-        params: {
-          query: searchTerm,
-          include_adult: "false",
-          language: "en-US",
-          page: "1",
-        },
-        headers: {
-          accept: "application/json",
-          Authorization: `Bearer ${bearerToken}`,
-        },
-      };
-      const response = await axios.request(options);
+      const response = await getSearch(filter, searchTerm);
       setResults(response.data.results);
     }
 

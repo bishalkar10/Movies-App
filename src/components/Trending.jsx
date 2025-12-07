@@ -1,14 +1,13 @@
-import axios from "axios";
+import { getTrending } from "@/api/tmdb";
 import { useState, useEffect } from "react";
 import { MoviesCard } from "./MoviesCard";
 import { ShowCards, ShowLoadingCards } from "./ShowCards";
 import Selector from "./Selector";
-import { formatDate } from "./utils";
+import { formatDate } from "@/components/utils";
 
 export default function Trending() {
   const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
   const [timeFrame, setTimeFrame] = useState("day");
-  const bearerToken = import.meta.env.VITE_BEARER_TOKEN;
   const [contentType, setContentType] = useState("movie");
   const fixedPath = "https://image.tmdb.org/t/p/w500";
   const [loading, setLoading] = useState(true);
@@ -16,21 +15,15 @@ export default function Trending() {
   // call api then set moviesArray to response.data.results -> it's an array
   useEffect(() => {
     async function fetchData() {
-      const url = `https://api.themoviedb.org/3/trending/${contentType}/${timeFrame}`;
-      const options = {
-        headers: {
-          accept: "application/json",
-          Authorization: `Bearer ${bearerToken} `,
-        },
-      };
       try {
-        setLoading(true); // setLoading to true while data is loading
-        const response = await axios.get(url, options);
-        console.log(response.data.results)
+        setLoading(true);
+        const response = await getTrending(contentType, timeFrame);
+        console.log(response.data.results);
         setMoviesArray(response.data.results);
-        setLoading(false); // setLoading to false when data is loaded
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setLoading(false); // Ensure loading is set to false even on error
       }
     }
     fetchData();

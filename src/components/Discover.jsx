@@ -1,10 +1,10 @@
-import axios from "axios";
+import { getDiscover } from "@/api/tmdb";
 import { useState, useEffect } from "react";
 import { MoviesCard } from "./MoviesCard";
 import Genre from "./Genre";
 import { ShowCards, ShowLoadingCards } from "./ShowCards";
 import Selector from "./Selector";
-import { formatDate } from "./utils";
+import { formatDate } from "@/components/utils";
 
 export default function Discover() {
   const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
@@ -13,24 +13,12 @@ export default function Discover() {
   const [loading, setLoading] = useState(true);
 
   const fixedPath = "https://image.tmdb.org/t/p/w500"; // url prefix for images link
-  const bearerToken = import.meta.env.VITE_BEARER_TOKEN; // extracting the bearer token from .env file
 
   useEffect(() => {
     async function fetchData() {
-      const url = `https://api.themoviedb.org/3/discover/${contentType}`;
-      const options = {
-        params: {
-          with_genres: genre,
-        },
-        headers: {
-          accept: "application/json",
-          Authorization: `Bearer ${bearerToken} `,
-        },
-      };
-
       try {
-        setLoading(true); // setLoading to true while data is loading
-        const response = await axios.get(url, options);
+        setLoading(true);
+        const response = await getDiscover(contentType, 1, genre);
         setMoviesArray(response.data.results);
         setLoading(false); // setLoading to false when data is loaded
       } catch (error) {

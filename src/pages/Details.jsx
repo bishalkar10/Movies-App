@@ -1,23 +1,15 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { getDetails } from "@/api/tmdb";
 import { useParams } from "react-router-dom";
-import { getReleaseYear, getRuntime } from "../components/utils";
+import { getReleaseYear, getRuntime } from "@/components/utils";
 export default function Details() {
   const { id, type } = useParams();
   const [movieData, setMovieData] = useState({});
   const fixedPath = "https://image.tmdb.org/t/p/w500";
-  const bearerToken = import.meta.env.VITE_BEARER_TOKEN;
 
   useEffect(() => {
     async function fetchData() {
-      const url = `https://api.themoviedb.org/3/${type}/${id}`;
-      const options = {
-        headers: {
-          accept: "application/json",
-          Authorization: `Bearer ${bearerToken} `,
-        },
-      };
-      const response = await axios.get(url, options);
+      const response = await getDetails(type, id);
       const data = response.data; // data is an object
       setMovieData(data);
     }

@@ -1,11 +1,11 @@
-import axios from "axios";
+import { getDiscover } from "@/api/tmdb";
 import { useState, useEffect } from "react";
-import { FlexMoviesCard } from "../components/MoviesCard";
-import Genre from "../components/Genre";
-import Selector from "../components/Selector";
-import { ShowGridCards } from "../components/ShowCards";
-import ScrollToTopButton from "../components/ScrollToTopButton";
-import { formatDate, useScrollVisibility } from "../components/utils";
+import { FlexMoviesCard } from "@/components/MoviesCard";
+import Genre from "@/components/Genre";
+import Selector from "@/components/Selector";
+import { ShowGridCards } from "@/components/ShowCards";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
+import { formatDate, useScrollVisibility } from "@/components/utils";
 
 export default function DiscoverGallery() {
   const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
@@ -13,7 +13,6 @@ export default function DiscoverGallery() {
   const [genre, setGenre] = useState("");
   const [contentType, setContentType] = useState("movie");
   const fixedPath = "https://image.tmdb.org/t/p/w500";
-  const bearerToken = import.meta.env.VITE_BEARER_TOKEN;
   const showArrowButton = useScrollVisibility();
   const uniqueMoviesId = new Map()
   const uniqueMovies = []
@@ -21,18 +20,7 @@ export default function DiscoverGallery() {
   // call api then set moviesArray to response.data.results  -> it's an array
   useEffect(() => {
     async function fetchData() {
-      const url = `https://api.themoviedb.org/3/discover/${contentType}`;
-      const options = {
-        params: {
-          page: page.toString(),
-          with_genres: genre,
-        },
-        headers: {
-          accept: "application/json",
-          Authorization: `Bearer ${bearerToken} `,
-        },
-      };
-      const response = await axios.get(url, options);
+      const response = await getDiscover(contentType, page, genre);
       setMoviesArray((prevMoviesArray) => [
         ...prevMoviesArray,
         ...response.data.results,
