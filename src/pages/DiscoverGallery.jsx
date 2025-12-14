@@ -1,121 +1,113 @@
 import { getDiscover } from "@/api/tmdb";
 import { useState, useEffect } from "react";
-import { FlexMoviesCard } from "@/components/MoviesCard";
+import { Link } from "react-router-dom";
+import { FaPlay, FaArrowLeft } from "react-icons/fa";
+import Navbar from "@/components/Navbar";
 import Genre from "@/components/Genre";
-import Selector from "@/components/Selector";
-import { ShowGridCards } from "@/components/ShowCards";
+
+import { LoadingCards } from "@/components/MoviesCard";
+import Select from '@/components/Select';
+import { MEDIA_TYPE } from '@/constants';
+import MovieCard from "@/components/MoviesCard";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
-import { formatDate, useScrollVisibility } from "@/components/utils";
 
 export default function DiscoverGallery() {
-  const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
-  const [page, setPage] = useState(1); // page number
-  const [genre, setGenre] = useState("");
+  const [movies, setMovies] = useState([]);
   const [contentType, setContentType] = useState("movie");
-  const fixedPath = "https://image.tmdb.org/t/p/w500";
-  const showArrowButton = useScrollVisibility();
-  const uniqueMoviesId = new Map()
-  const uniqueMovies = []
+  const [page, setPage] = useState(1);
+  const [genre, setGenre] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // call api then set moviesArray to response.data.results  -> it's an array
+  // Fetch Data
   useEffect(() => {
-    async function fetchData() {
-      const response = await getDiscover(contentType, page, genre);
-      setMoviesArray((prevMoviesArray) => [
-        ...prevMoviesArray,
-        ...response.data.results,
-      ]);
-    }
-
-    fetchData();
-  }, [page, genre, contentType]);
-
-  // * filter moviesArray to get unique movie
-  moviesArray.forEach(movie => {
-    if (!uniqueMoviesId.has(movie.id)) {
-      uniqueMoviesId.set(movie.id, true)
-      uniqueMovies.push(movie)
-    }
-  })
-  // * map MoviesCard component for each movie in uniqueMovies
-  const listOfMovies = uniqueMovies.map((movie) => {
-    return (
-      <FlexMoviesCard
-        type={contentType}
-        id={movie.id}
-        key={movie.id}
-        url={fixedPath + movie.poster_path} // * const fixedPath + the url for the poster
-        name={
-          movie.title ||
-          movie.name ||
-          movie.original_title ||
-          movie.original_name
-        } // * sometimes the title is not available ans sometimes it's original_title or original_name
-        releaseDate={formatDate(movie.release_date || movie.first_air_date)}
-      />
-    );
-  });
-
-  // when our user reaches the page bottom them immedietly call the handlePageEnd funtion and set isScrolling to true.
-  // We set isScrolling to true so that the handlePageEnd function is not called multiple times.
-  // We set isScrolling to false after 500ms so that the handlePageEnd function can be called again.
-  // * this is to prevent the handlePageEnd function from being called multiple times when the user reaches the page bottom
-  useEffect(() => {
-    // when our user reaches the page bottom them immedietly call the handlePageEnd funtion 
-    // this function increments the page number by 1 which causes the useEffect to run again and make an api call with the new page number
-    const handlePageEnd = () => setPage((prevPage) => prevPage + 1);
-    let isScrolling = false;
-
-    function handleScroll() {
-      if (isScrolling) {
-        return;
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await getDiscover(contentType, page, genre);
+        if (page === 1) {
+          setMovies(response.data?.results || []);
+        } else {
+          setMovies(prev => [...prev, ...(response.data?.results || [])]);
+        }
+      } catch (error) {
+        console.error("Error fetching discover:", error);
+      } finally {
+        setLoading(false);
       }
-
-      const scrollTop = document.documentElement?.scrollTop || document.body.scrollTop;
-      const scrollHeight = document.documentElement?.scrollHeight || document.body.scrollHeight;
-      const clientHeight = document.documentElement?.clientHeight || window.innerHeight;
-      const scrolledToBottom = Math.ceil(scrollTop + clientHeight + 200) >= scrollHeight;
-
-      if (scrolledToBottom) {
-        handlePageEnd();
-        isScrolling = true;
-        setTimeout(() => {
-          isScrolling = false;
-        }, 500);
-      }
-    }
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+    fetchData();
+  }, [contentType, page, genre]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+    setMovies([]);
+  }, [contentType, genre]);
+
+  // Infinite Scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !loading) {
+        setPage(prev => prev + 1);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loading]);
 
   return (
-    <div>
-      <div className="flex items-center gap-5 p-5  bg-[#e9edc9] ">
-        <h2 className="mr-auto text-xl sm:text-3xl ">Discover Gallery</h2>
+    <div className="modern-app">
+      <Navbar />
 
-        <Selector
-          name="contentType"
-          id="contentType_discoverGallery"
-          setMoviesArray={setMoviesArray}
-          setPage={setPage}
-          state={contentType}
-          setState={setContentType}
-          values={["movie", "tv"]}
-        />
-        <Genre
-          setMoviesArray={setMoviesArray}
-          setPage={setPage}
-          type={contentType}
-          genre={genre}
-          setGenre={setGenre}
-        />
+      <div className="gallery-container">
+        <div className="gallery-header">
+          <div className="gallery-title-group">
+            <Link to="/" className="back-link">
+              <FaArrowLeft />
+            </Link>
+            <h1 className="section-title gallery-title">Discover Gallery</h1>
+          </div>
+
+          <div className="gallery-actions">
+            {/* Content Type Selector */}
+            <Select
+              options={[
+                { label: 'Movies', value: MEDIA_TYPE.MOVIE },
+                { label: 'TV Shows', value: MEDIA_TYPE.TV }
+              ]}
+              value={contentType}
+              onChange={setContentType}
+              className="w-40"
+            />
+
+            <div style={{ color: 'black' }}>
+              <Genre
+                setMoviesArray={() => { }}
+                setPage={setPage}
+                type={contentType}
+                genre={genre}
+                setGenre={setGenre}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="movies-grid">
+          {movies.map((movie, index) => (
+            <MovieCard
+              key={`${movie.id}-${index}`}
+              movie={movie}
+              type={contentType}
+              className="w-full"
+            />
+          ))}
+
+          {loading && Array.from({ length: 10 }).map((_, index) => (
+            <LoadingCards key={`skeleton-${index}`} />
+          ))}
+        </div>
       </div>
-
-      <ShowGridCards listOfMovies={listOfMovies} />
-      {showArrowButton && <ScrollToTopButton />}
+      <ScrollToTopButton />
     </div>
   );
 }

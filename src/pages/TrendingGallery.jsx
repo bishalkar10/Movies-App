@@ -1,122 +1,113 @@
 import { getTrending } from "@/api/tmdb";
 import { useState, useEffect } from "react";
-import { FlexMoviesCard } from "@/components/MoviesCard";
-import Selector from "@/components/Selector";
-import { ShowGridCards } from "@/components/ShowCards";
+import { Link } from "react-router-dom";
+import { FaPlay, FaArrowLeft } from "react-icons/fa";
+import Navbar from "@/components/Navbar";
+
+import { LoadingCards } from "@/components/MoviesCard";
+import Select from "@/components/Select";
+import { MEDIA_TYPE, TIME_WINDOW } from "@/constants";
+import MovieCard from "@/components/MoviesCard";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
-import { formatDate, useScrollVisibility } from "@/components/utils";
 
-export default function Gallery() {
-  const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
+export default function TrendingGallery() {
+  const [movies, setMovies] = useState([]);
   const [timeFrame, setTimeFrame] = useState("day");
-  const [page, setPage] = useState(1); // page number
   const [contentType, setContentType] = useState("movie");
-  const fixedPath = "https://image.tmdb.org/t/p/w500";
-  const showArrowButton = useScrollVisibility();     // custom hook - returns true if the user scrolled down 250px
-  const uniqueMoviesId = new Map()
-  const uniqueMovies = []
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
-  // call api then set moviesArray to response.data.results  -> it's an array
+  // Fetch Data
   useEffect(() => {
-    async function fetchData() {
-      const response = await getTrending(contentType, timeFrame, page);
-      setMoviesArray((prevMoviesArray) => [
-        ...prevMoviesArray,
-        ...response.data.results,
-      ]);
-    }
-
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await getTrending(contentType, timeFrame, page);
+        if (page === 1) {
+          setMovies(response.data?.results || []);
+        } else {
+          setMovies(prev => [...prev, ...(response.data?.results || [])]);
+        }
+      } catch (error) {
+        console.error("Error fetching trending:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchData();
   }, [contentType, timeFrame, page]);
 
-  // * filter moviesArray to get unique movie
-  moviesArray.forEach(movie => {
-    if (!uniqueMoviesId.has(movie.id)) {
-      uniqueMoviesId.set(movie.id, true)
-      uniqueMovies.push(movie)
-    }
-  })
-
-  // * map MoviesCard component for each movie in uniqueMovies
-  const listOfMovies = uniqueMovies.map((movie) => {
-    return (
-      <FlexMoviesCard
-        type={contentType}
-        id={movie.id}
-        key={movie.id}
-        url={fixedPath + movie.poster_path}
-        name={
-          movie.title ||
-          movie.name ||
-          movie.originial_title ||
-          movie.original_name
-        }
-        releaseDate={formatDate(movie.release_date || movie.first_air_date)}
-      />
-    );
-  });
-
-  // when our user reaches the page bottom them immedietly call the handlePageEnd funtion and set isScrolling to true.
-  // We set isScrolling to true so that the handlePageEnd function is not called multiple times preventing excessive api calls.
-  // We set isScrolling to false after 500ms so that the handlePageEnd function can be called again.
-  // * this is to prevent the handlePageEnd function from being called multiple times when the user reaches the page bottom
+  // Reset page when filters change
   useEffect(() => {
-    // when our user reaches the page bottom them immedietly call the handlePageEnd funtion 
-    // this function increments the page number by 1 which causes the useEffect to run again and make an api call with the new page number
-    const handlePageEnd = () => setPage((prevPage) => prevPage + 1);
-    let isScrolling = false;
+    setPage(1);
+    setMovies([]);
+  }, [contentType, timeFrame]);
 
-    function handleScroll() {
-      if (isScrolling) {
-        return;
+  // Infinite Scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !loading) {
+        setPage(prev => prev + 1);
       }
-
-      const scrollTop = document.documentElement?.scrollTop || document.body.scrollTop;
-      const scrollHeight = document.documentElement?.scrollHeight || document.body.scrollHeight;
-      const clientHeight = document.documentElement?.clientHeight || window.innerHeight;
-      const scrolledToBottom = Math.ceil(scrollTop + clientHeight + 200) >= scrollHeight;
-
-      if (scrolledToBottom) {
-        handlePageEnd();
-        isScrolling = true;
-        setTimeout(() => {
-          isScrolling = false;
-        }, 500);
-      }
-    }
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loading]);
 
   return (
-    <>
-      <div className="flex items-center gap-5 p-5  bg-[#e9edc9] ">
-        <h2 className="mr-auto text-xl sm:text-3xl">Trending Gallery</h2>
-        <Selector
-          name="timeFrame"
-          id="timeFrame_trendingGallery"
-          setMoviesArray={setMoviesArray}
-          setPage={setPage}
-          state={timeFrame}
-          setState={setTimeFrame}
-          values={["day", "week"]}
-        />
+    <div className="modern-app">
+      <Navbar />
 
-        <Selector
-          name="contentType"
-          id="contentType_trendingGallery"
-          setMoviesArray={setMoviesArray}
-          setPage={setPage}
-          state={contentType}
-          setState={setContentType}
-          values={["movie", "tv"]}
-        />
+      <div className="gallery-container">
+        <div className="gallery-header">
+          <div className="gallery-title-group">
+            <Link to="/" className="back-link">
+              <FaArrowLeft />
+            </Link>
+            <h1 className="section-title gallery-title">Trending Gallery</h1>
+          </div>
+
+          <div className="gallery-actions">
+            {/* Content Type Selector */}
+            <Select
+              options={[
+                { label: 'Movies', value: MEDIA_TYPE.MOVIE },
+                { label: 'TV Shows', value: MEDIA_TYPE.TV }
+              ]}
+              value={contentType}
+              onChange={setContentType}
+              className="w-40"
+            />
+
+            {/* Time Frame Selector */}
+            <Select
+              options={[
+                { label: 'Today', value: TIME_WINDOW.DAY },
+                { label: 'This Week', value: TIME_WINDOW.WEEK }
+              ]}
+              value={timeFrame}
+              onChange={setTimeFrame}
+              className="w-40"
+            />
+          </div>
+        </div>
+
+        <div className="movies-grid">
+          {movies.map((movie, index) => (
+            <MovieCard
+              key={`${movie.id}-${index}`}
+              movie={movie}
+              type={contentType}
+              className="w-full"
+            />
+          ))}
+
+          {loading && Array.from({ length: 10 }).map((_, index) => (
+            <LoadingCards key={`skeleton-${index}`} />
+          ))}
+        </div>
       </div>
-      <ShowGridCards listOfMovies={listOfMovies} />
-      {showArrowButton && <ScrollToTopButton />}
-    </>
+      <ScrollToTopButton />
+    </div>
   );
 }

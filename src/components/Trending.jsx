@@ -1,79 +1,90 @@
-import { getTrending } from "@/api/tmdb";
-import { useState, useEffect } from "react";
-import { MoviesCard } from "./MoviesCard";
-import { ShowCards, ShowLoadingCards } from "./ShowCards";
-import Selector from "./Selector";
-import { formatDate } from "@/components/utils";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { FaChevronRight } from 'react-icons/fa';
+import { getTrending } from '../api/tmdb';
+import MovieCard, { LoadingCards } from './MoviesCard';
+import { MEDIA_TYPE, TIME_WINDOW } from '../constants';
+import Select from './Select';
+
 
 export default function Trending() {
-  const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
-  const [timeFrame, setTimeFrame] = useState("day");
-  const [contentType, setContentType] = useState("movie");
-  const fixedPath = "https://image.tmdb.org/t/p/w500";
+  const [trending, setTrending] = useState([]);
+  const [trendingTime, setTrendingTime] = useState(TIME_WINDOW.DAY);
+  const [trendingType, setTrendingType] = useState(MEDIA_TYPE.MOVIE);
   const [loading, setLoading] = useState(true);
 
-  // call api then set moviesArray to response.data.results -> it's an array
   useEffect(() => {
-    async function fetchData() {
+    // Fetch Trending
+    const fetchTrending = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        const response = await getTrending(contentType, timeFrame);
-        console.log(response.data.results);
-        setMoviesArray(response.data.results);
-        setLoading(false);
+        const response = await getTrending(trendingType, trendingTime);
+        const results = response.data?.results || [];
+        setTrending(results);
       } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false); // Ensure loading is set to false even on error
+        console.error("Error fetching trending:", error);
+      } finally {
+        setLoading(false);
       }
-    }
-    fetchData();
-  }, [contentType, timeFrame]);
-
-  // map MoviesCard component for each movie in moviesArray
-  const listOfMovies = moviesArray.map((movie) => {
-    return (
-      <MoviesCard
-        type={contentType}
-        id={movie.id}
-        key={movie.id}
-        url={fixedPath + movie.poster_path}
-        name={
-          movie.title ||
-          movie.name ||
-          movie.original_title ||
-          movie.original_name
-        }
-        releaseDate={formatDate(movie.release_date || movie.first_air_date)}
-      />
-    );
-  });
+    };
+    fetchTrending();
+  }, [trendingTime, trendingType]);
 
   return (
-    <>
-      <div className="flex items-center gap-5 p-5 bg-[#e9edc9] ">
-        <h2 className="mr-auto text-xl sm:text-3xl ">Trending</h2>
-        <Selector
-          setMoviesArray={setMoviesArray}
-          state={timeFrame}
-          setState={setTimeFrame}
-          values={["day", "week"]}
-        />
+    <section className="category-section">
+      <div className="section-header">
+        <div className="section-title-group">
+          <h2 className="section-title section-title-text">Trending Now</h2>
+          {/* Controls Container */}
+          <div className='btn-link-wrapper'>
 
-        <Selector
-          name="contentType"
-          id="contentType_trending"
-          setMoviesArray={setMoviesArray}
-          state={contentType}
-          setState={setContentType}
-          values={["movie", "tv"]}
-        />
+            <div className="select-group">
+              {/* Type Select */}
+              <Select
+                options={[
+                  { label: 'Movies', value: MEDIA_TYPE.MOVIE },
+                  { label: 'TV Shows', value: MEDIA_TYPE.TV }
+                ]}
+                value={trendingType}
+                onChange={setTrendingType}
+                className="w-32"
+              />
+              {/* Time Select */}
+              <Select
+                options={[
+                  { label: 'Today', value: TIME_WINDOW.DAY },
+                  { label: 'This Week', value: TIME_WINDOW.WEEK }
+                ]}
+                value={trendingTime}
+                onChange={setTrendingTime}
+                className="w-32"
+              />
+            </div>
+            <Link to="/trending_gallery" className="see-all-link">
+              See All <FaChevronRight size={12} />
+            </Link>
+          </div>
+        </div>
       </div>
-
-      {loading ? (
-        <ShowLoadingCards /> // Display loading cards while data is loading
-      ) : (
-        <ShowCards listOfMovies={listOfMovies} route="/trending_gallery" />
-      )}
-    </>
+      <div className="movie-row">
+        {loading ? (
+          // Show loading skeletons
+          Array.from({ length: 6 }).map((_, index) => (
+            <LoadingCards key={index} />
+          ))
+        ) : (
+          <>
+            {trending.map(movie => (
+              <MovieCard key={movie.id} movie={movie} type={trendingType} />
+            ))}
+            {/* See All Card */}
+            <Link to="/trending_gallery" className="see-all-card">
+              <div className="see-all-icon"><FaChevronRight /></div>
+              <span>See All</span>
+            </Link>
+          </>
+        )}
+      </div>
+    </section>
   );
 }

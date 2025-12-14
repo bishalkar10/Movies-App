@@ -2,27 +2,747 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CSS */
+:root {
+  /* Auxir-inspired Theme */
+  --font-main: "Inter", sans-serif;
+  --border-radius: 0px;
 
-/* CSS */
+  /* Palette */
+  --primary-color: #6366f1; /* Electric Indigo */
+  --primary-hover: #4f46e5;
+  --secondary-color: #3b82f6; /* Bright Blue */
+
+  --bg-color: #020410; /* Deep Space Black/Blue */
+  --card-bg: #0f111a; /* Dark Navy Card */
+  --nav-bg: rgba(2, 4, 16, 0.85); /* Glassmorphism needs transparency */
+
+  --text-color: #f8fafc; /* Slate 50 */
+  --text-secondary: #94a3b8; /* Slate 400 - Blueish Grey */
+
+  --border-color: #1e293b; /* Slate 800 */
+  --toggle-btn-bg: #1e293b;
+  --toggle-btn-text: #fff;
+}
+
+body {
+  background-color: var(--bg-color);
+  /* Subtle top-left glow to mimic the reference */
+  background-image: radial-gradient(
+      circle at 15% 0%,
+      rgba(99, 102, 241, 0.15) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 85% 30%,
+      rgba(59, 130, 246, 0.1) 0%,
+      transparent 40%
+    );
+  background-attachment: fixed;
+  color: var(--text-color);
+  font-family: var(--font-main);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+
+  /* Firefox Scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+/* Modern App Styles */
+.modern-app {
+  min-height: 100vh;
+}
+
+.modern-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 4%;
+  background: var(--nav-bg);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  width: 100%;
+  z-index: 100;
+  top: 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 800; /* Extra bold */
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  margin: 0 1rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--text-color);
+}
+
+.nav-actions {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+.gallery-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.hero {
+  height: 90vh; /* Slightly shorter hero */
+  background-image: var(--hero-bg);
+  background-size: cover;
+  background-position: center top; /* Focus on top part of image */
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 4%;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+      circle at center,
+      transparent 0%,
+      rgba(18, 18, 18, 0.6) 100%
+    ),
+    linear-gradient(to top, var(--bg-color) 10%, transparent 60%);
+}
+
+/* Search Bar Styles */
+.search-container {
+  display: flex;
+  align-items: center;
+  background: #2a2a2a; /* Lighter than bg, darker than card */
+  border: 1px solid transparent;
+  padding: 0.6rem 1rem;
+  border-radius: var(--border-radius);
+  transition: border-color 0.2s;
+}
+
+.search-container:focus-within {
+  border-color: var(--text-secondary);
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  margin-left: 0.5rem;
+  outline: none;
+  font-size: 1rem;
+  width: 250px;
+}
+
+.search-input::placeholder {
+  color: #666;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  max-width: 700px;
+}
+
+.hero-genres {
+  color: var(--secondary-color);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 0.9rem;
+}
+
+.hero-title {
+  font-size: clamp(3rem, 6vw, 5rem);
+  margin: 0;
+  line-height: 1.05;
+  font-weight: 900;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  color: white;
+}
+
+.hero-overview {
+  color: #e0e0e0;
+  font-size: 1.15rem;
+  margin: 2rem 0;
+  line-height: 1.7;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  max-width: 600px;
+}
+
+.category-section {
+  padding: 2rem;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+  letter-spacing: -0.5px;
+}
+
+.movie-row {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 2rem;
+  padding-top: 1rem;
+  padding-left: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.btn-link-wrapper {
+  width: 100%;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.select-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.movie-row .movie-card-link,
+.see-all-card {
+  max-width: 240px;
+}
+
+/* Movie Card Redesign - Text Below */
+.movie-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex-shrink: 0;
+}
+
+.movie-card,
+.see-all-card {
+  width: 100%;
+  aspect-ratio: 2/3;
+  border-radius: var(--border-radius);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+  background-color: #2a2a2a;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.see-all-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  height: 100%;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.15),
+    rgba(15, 23, 42, 0.8)
+  );
+  color: var(--primary-color);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+}
+
+.see-all-card:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.25),
+    rgba(15, 23, 42, 0.9)
+  );
+  border-color: var(--primary-color);
+  color: #fff;
+}
+
+.movie-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.movie-title {
+  display: block;
+  padding: 0 0.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 1rem;
+  white-space: nowrap;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+/* Broken Image State */
+.broken-card {
+  width: 100%;
+  height: 100%; /* Fill the container's aspect ratio */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.1),
+    rgba(15, 23, 42, 0.8)
+  );
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.broken-text {
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  font-style: italic;
+  color: var(--primary-color);
+}
+
+.broken-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.7;
+}
+
+/* Skeleton Utilities */
+.skeleton-text {
+  height: 1rem;
+  background: #2a2a2a;
+  border-radius: 4px; /* Text skeletons usually look better slightly rounded */
+  margin-top: 0.5rem;
+}
+
+.skeleton-hero {
+  height: 90vh;
+  width: 100%;
+  background: #1a1a1a;
+  position: relative;
+}
+
+.skeleton-title {
+  height: 4rem;
+  width: 50%;
+  background: #2a2a2a;
+  margin-bottom: 1rem;
+}
+
+.skeleton-desc {
+  height: 1rem;
+  width: 80%;
+  background: #2a2a2a;
+  margin-bottom: 0.5rem;
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  height: 10px;
-  width: 10px;
-  border-radius: 10px; /* Add border-radius */
+  width: 8px; /* Thinner global scrollbar */
+  height: 8px;
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
-  background: none;
+  background: transparent; /* Invisible track */
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #dadada;
-  border-radius: 10px; /* Add border-radius */
+  background-color: var(--border-color);
+  border-radius: var(--border-radius);
+  border: 1px solid transparent; /* Remove thick border for sleeker look */
+  background-clip: content-box;
 }
 
-/* Handle on hover */
-/* ::-webkit-scrollbar-thumb:hover {
-  background: #dadada;
-} */
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--primary-color);
+}
+
+/* Specific class for Select Dropdown to be extra thin */
+.custom-select-dropdown ::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-select-dropdown ::-webkit-scrollbar-thumb,
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--text-secondary);
+  border-radius: var(--border-radius);
+}
+
+/* Gallery Styles */
+.gallery-container {
+  padding-top: 2rem;
+  padding-left: 4%;
+  padding-right: 4%;
+  padding-bottom: 4rem;
+}
+
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  row-gap: 2rem;
+  column-gap: 1rem;
+  justify-items: center;
+  width: 100%;
+}
+
+.gallery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.gallery-title-group {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.back-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 1.5rem;
+  transition: color 0.2s;
+}
+.back-link:hover {
+  color: var(--primary-color);
+}
+
+.gallery-title {
+  font-size: 2rem;
+  margin: 0;
+  font-weight: 800;
+}
+
+/* Loading Skeleton */
+.skeleton {
+  background: linear-gradient(90deg, #2a2a2a 25%, #333 50%, #2a2a2a 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.loading-card {
+  width: 100%;
+  aspect-ratio: 2/3;
+  background: #2a2a2a;
+  border-radius: var(--border-radius);
+}
+
+/* New Loading Card Styles (Plain CSS) */
+.loading-card-container {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 100%; /* Use 100% by default (perfect for Grid) */
+  gap: 0.75rem; /* gap-3 */
+}
+
+/* In Movie Row (Flex), we need explicit widths since there's no grid constraint */
+.movie-row .loading-card-container {
+  width: 220px;
+}
+
+@media (max-width: 768px) {
+  .movie-row .loading-card-container {
+    width: 160px;
+  }
+}
+
+.loading-card-poster {
+  width: 100%;
+  aspect-ratio: 2/3;
+  border-radius: var(--border-radius); /* rounded-lg */
+  border: 1px solid rgba(99, 102, 241, 0.1); /* border-indigo-500/10 */
+  box-sizing: border-box;
+}
+
+.loading-card-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the text line */
+  gap: 0.5rem; /* gap-2 */
+  padding: 0 0.25rem; /* px-1 */
+}
+
+.loading-card-text-line {
+  height: 0.75rem; /* h-3 */
+  border-radius: 4px; /* rounded */
+}
+
+/* Specific widths for text lines to mimic title/subtitle */
+.loading-card-text-line:nth-child(1) {
+  width: 75%;
+}
+
+.loading-card-text-line:nth-child(2) {
+  width: 50%;
+}
+
+.skeleton-shimmer {
+  /* More vibrant/visible blue-indigo gradient */
+  background: linear-gradient(
+    90deg,
+    rgba(30, 41, 59, 1) 25%,
+    rgba(99, 102, 241, 0.4) 50%,
+    rgba(30, 41, 59, 1) 75%
+  );
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+/* Utility / Misc */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.section-title-group {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 2rem;
+}
+
+.section-title-text {
+  margin: 0;
+}
+
+.see-all-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+}
+.see-all-link:hover {
+  color: var(--primary-color);
+}
+
+/* Select Component */
+.custom-select-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  text-align: left;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  color: var(--text-color);
+  transition: all 0.2s;
+}
+
+.custom-select-button:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); /* Indigo ring */
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  z-index: 50;
+  width: 100%;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+.custom-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: var(--text-secondary);
+}
+
+.custom-select-option:hover {
+  background-color: var(--border-color);
+  color: var(--text-color);
+}
+
+/* ... previous CSS ... */
+
+/* --- Responsive Design --- */
+
+/* Laptop / Desktop adjustments if needed */
+@media (max-width: 1024px) {
+  .hero-title {
+    font-size: 3.5rem;
+  }
+
+  .gallery-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Tablet & Mobile */
+@media (max-width: 768px) {
+  /* Navigation */
+  .modern-nav {
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .nav-actions {
+    width: 100%;
+  }
+
+  .search-container {
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  /* Hero Section */
+  .hero {
+    height: 60vh;
+    padding-top: 4rem; /* Spacing for fixed nav */
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-overview {
+    font-size: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Section Headers */
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .section-title-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .select-group {
+    gap: 0.5rem;
+  }
+
+  .see-all-link {
+    align-self: flex-end;
+  }
+
+  .category-section .movie-card-link {
+    max-width: 160px;
+  }
+
+  /* Gallery Headers */
+  .gallery-header {
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .back-link {
+    font-size: 1rem;
+  }
+
+  .gallery-title {
+    font-size: 1.5rem;
+  }
+
+  .gallery-title-group {
+    justify-content: space-between;
+  }
+
+  /* Controls */
+  .toggle-group {
+    width: 100%;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  /* Remove fixed heights, rely on aspect-ratio */
+  /* .movie-card img, .loading-card, .see-all-card heights removed */
+
+  .see-all-card {
+    min-width: 160px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  /* Remove fixed heights */
+
+  .see-all-card {
+    min-width: 145px;
+  }
+
+  .gallery-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+}

@@ -32,7 +32,7 @@ export const getSearch = (type, query, page = 1) => {
 };
 
 export const getDetails = (type, id) => {
-  return api.get(`/details/${type}/${id}`);
+  return api.get(`/${type}/${id}`);
 };
 
 export default api;

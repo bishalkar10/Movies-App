@@ -1,71 +1,82 @@
-import { getDiscover } from "@/api/tmdb";
-import { useState, useEffect } from "react";
-import { MoviesCard } from "./MoviesCard";
-import Genre from "./Genre";
-import { ShowCards, ShowLoadingCards } from "./ShowCards";
-import Selector from "./Selector";
-import { formatDate } from "@/components/utils";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { FaChevronRight } from 'react-icons/fa';
+import { getDiscover } from '../api/tmdb';
+import MovieCard, { LoadingCards } from './MoviesCard';
+import Genre from './Genre';
+import { MEDIA_TYPE, TMDB_API, IMAGE_SIZE } from '../constants';
+import Select from './Select';
+
 
 export default function Discover() {
-  const [moviesArray, setMoviesArray] = useState([]); // array of response.data.results
-  const [contentType, setContentType] = useState("movie");
+  const [discover, setDiscover] = useState([]);
+  const [discoverType, setDiscoverType] = useState(MEDIA_TYPE.MOVIE);
   const [genre, setGenre] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const fixedPath = "https://image.tmdb.org/t/p/w500"; // url prefix for images link
-
   useEffect(() => {
-    async function fetchData() {
+    // Fetch Discover
+    const fetchDiscover = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        const response = await getDiscover(contentType, 1, genre);
-        setMoviesArray(response.data.results);
-        setLoading(false); // setLoading to false when data is loaded
+        const response = await getDiscover(discoverType, 1, genre);
+        setDiscover(response.data?.results || []);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching discover:", error);
+      } finally {
+        setLoading(false);
       }
-    }
-    fetchData();
-  }, [contentType, genre]);
-
-  const listOfMovies = moviesArray.map((movie) => {
-    return (
-      <MoviesCard
-        type={contentType}
-        id={movie.id}
-        key={movie.id}
-        url={fixedPath + movie.poster_path} // const fixedPath + the url for the poster
-        name={
-          movie.title ||
-          movie.name ||
-          movie.original_title ||
-          movie.original_name
-        } // sometimes the title is not available ans sometimes it's original_title or original_name
-        releaseDate={formatDate(movie.release_date || movie.first_air_date)}
-      />
-    );
-  });
+    };
+    fetchDiscover();
+  }, [discoverType, genre]);
 
   return (
-    <>
-      <div className="flex items-center gap-5 p-5 bg-[#e9edc9] ">
-        <h2 className="mr-auto text-xl sm:text-3xl">Discover</h2>
+    <section className="category-section">
+      <div className="section-header">
+        <div className="section-title-group">
+          <h2 className="section-title section-title-text">Discover</h2>
+          <div className='btn-link-wrapper'>
 
-        <Selector
-          name="contentType"
-          id="contentType_discover"
-          setMoviesArray={setMoviesArray}
-          state={contentType}
-          setState={setContentType}
-          values={["movie", "tv"]}
-        />
-        <Genre type={contentType} genre={genre} setGenre={setGenre} />
+            <div className="select-group">
+              <Select
+                options={[
+                  { label: 'Movies', value: MEDIA_TYPE.MOVIE },
+                  { label: 'TV Shows', value: MEDIA_TYPE.TV }
+                ]}
+                value={discoverType}
+                onChange={setDiscoverType}
+                className="w-32"
+              />
+              {/* Genre Selector */}
+              <div style={{ color: 'black' }}>
+                <Genre type={discoverType} genre={genre} setGenre={setGenre} />
+              </div>
+            </div>
+            <Link to="/discover_gallery" className="see-all-link">
+              See All <FaChevronRight size={12} />
+            </Link>
+          </div>
+        </div>
       </div>
-      {loading ? (
-        <ShowLoadingCards /> // Display loading cards while data is loading
-      ) : (
-        <ShowCards listOfMovies={listOfMovies} route="/discover_gallery" />
-      )}
-    </>
+      <div className="movie-row">
+        {loading ? (
+          // Show loading skeletons
+          Array.from({ length: 6 }).map((_, index) => (
+            <LoadingCards key={index} />
+          ))
+        ) : (
+          <>
+            {discover.map(movie => (
+              <MovieCard key={movie.id} movie={movie} type={discoverType} />
+            ))}
+            {/* See All Card */}
+            <Link to="/discover_gallery" className="see-all-card">
+              <span>See All</span>
+              <FaChevronRight />
+            </Link>
+          </>
+        )}
+      </div>
+    </section>
   );
 }
