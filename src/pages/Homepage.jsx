@@ -6,7 +6,7 @@ import Trending from '../components/Trending';
 import Discover from '../components/Discover';
 import { MEDIA_TYPE, TIME_WINDOW, TMDB_API, IMAGE_SIZE } from '../constants';
 
-function HomepageSkeleton() {
+export function HomepageSkeleton() {
   return (
     <div className="modern-app">
       <Navbar />
