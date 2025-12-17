@@ -22,6 +22,6 @@
 [[headers]]
   for = "/api/*"
   [headers.values]
-    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Origin = "http://localhost:5173"
     Access-Control-Allow-Headers = "*"
     Access-Control-Allow-Methods = "*"
