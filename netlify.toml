@@ -11,6 +11,13 @@
   status = 200
   force = true
 
+# SPA Fallback Rule
+# Redirects all other paths to index.html so React Router can handle them
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
 # Allow localhost to use this proxy (CORS)
 [[headers]]
   for = "/api/*"
