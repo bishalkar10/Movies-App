@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // In production (Netlify), this falls back to '/api' (relative path).
-// In local dev, you can set VITE_API_BASE_URL="https://your-app.netlify.app/api" to use the remote proxy.
+// In local dev, I can set VITE_API_BASE_URL="https://your-app.netlify.app/api" to use the remote proxy.
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 const api = axios.create({
@@ -10,6 +10,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${import.meta.env.VITE_BEARER_TOKEN}`
   },
+  timeout: 30000, // 30 seconds timeout
 });
 
 export const getTrending = (type, time, page = 1) => {
